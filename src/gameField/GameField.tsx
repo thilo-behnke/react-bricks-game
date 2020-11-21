@@ -52,7 +52,6 @@ export const GameField = (props: GameFieldProps) => {
       default:
         return state;
     }
-    return state;
   }, gridMappingProvider.generateMapping(props.rows, props.cols));
 
   console.log("rendering", grid);
