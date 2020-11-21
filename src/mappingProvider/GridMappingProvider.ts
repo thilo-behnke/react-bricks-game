@@ -6,6 +6,7 @@ export interface GridMappingProvider {
   generateMapping: (rows: number, cols: number) => GridMapping;
 }
 
+// TODO: This data structure is terrible for functional updates... I did it this way to make the access in the ui efficient. Maybe switch the structure somehow when passing it into the component?
 export type GridMapping = {
   [row: number]: { [col: number]: { color?: Color } };
 };
