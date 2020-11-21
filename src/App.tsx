@@ -3,6 +3,10 @@ import "./App.css";
 import { GameField } from "./gameField/GameField";
 import styled from "styled-components";
 import { Color } from "./model/GameFieldModel";
+import {
+  GridMappingProviderContext,
+  StaticGridMappingProvider,
+} from "./mappingProvider/GridMappingProvider";
 
 const GameWrapper = styled.div`
   min-height: 100%;
@@ -21,14 +25,15 @@ const StyledGameField = styled(GameField)`
 function App() {
   const rows = 10;
   const cols = 10;
+
   return (
-    <GameWrapper>
-      <StyledGameField
-        rows={rows}
-        cols={cols}
-        mapping={{ 0: { 0: { color: Color.BLUE } } }}
-      />
-    </GameWrapper>
+    <GridMappingProviderContext.Provider
+      value={new StaticGridMappingProvider()}
+    >
+      <GameWrapper>
+        <StyledGameField rows={rows} cols={cols} />
+      </GameWrapper>
+    </GridMappingProviderContext.Provider>
   );
 }
 

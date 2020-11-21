@@ -1,17 +1,17 @@
-import React from "react";
+import React, { Dispatch, useContext, useReducer, useState } from "react";
 import styled from "styled-components";
 import { zipRange } from "../utils/ListUtils";
 import { GameFieldCell } from "./GameFieldCell";
 import { Color } from "../model/GameFieldModel";
+import {
+  GridMapping,
+  GridMappingAction,
+  GridMappingProviderContext,
+} from "../mappingProvider/GridMappingProvider";
 
 export type GameFieldProps = {
   rows: number;
   cols: number;
-  mapping: CellMapping;
-};
-
-export type CellMapping = {
-  [row: number]: { [col: number]: { color: Color } };
 };
 
 const Grid = styled.div`
@@ -22,13 +22,54 @@ const Grid = styled.div`
 `;
 
 export const GameField = (props: GameFieldProps) => {
+  const gridMappingProvider = useContext(GridMappingProviderContext);
+  const [grid, dispatch]: [
+    GridMapping,
+    Dispatch<GridMappingAction>
+  ] = useReducer((state: GridMapping, action: GridMappingAction) => {
+    switch (action.type) {
+      case "update_cell_color":
+        const {
+          payload: { row, col, color },
+        } = action;
+        if (action.payload.color === null) {
+          if (!state[row]?.[col]) {
+            return state;
+          }
+          const { color: _, ...stateWithoutColor } = state[row][col];
+          return {
+            ...state,
+            [row]: { ...state[row], [col]: stateWithoutColor },
+          };
+        }
+        return {
+          ...state,
+          [row]: {
+            ...state[row],
+            [col]: { ...state[row][col], color: color as Color },
+          },
+        };
+      default:
+        return state;
+    }
+    return state;
+  }, gridMappingProvider.generateMapping(props.rows, props.cols));
+
+  console.log("rendering", grid);
+
   return (
     <Grid {...props}>
       {zipRange(props.rows, props.cols).map(([row, col]) => {
         return (
           <GameFieldCell
             key={`${row}/${col}`}
-            color={props.mapping[row]?.[col]?.color}
+            color={grid[row]?.[col]?.color}
+            onClick={() =>
+              dispatch({
+                type: "update_cell_color",
+                payload: { row, col, color: null },
+              })
+            }
           />
         );
       })}
