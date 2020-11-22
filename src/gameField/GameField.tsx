@@ -32,14 +32,28 @@ const Grid = styled.div`
 `;
 
 const Controls = styled.div`
+  width: 100%;
   padding-top: 1em;
   grid-area: header;
   justify-self: center;
   display: flex;
   flex-flow: row wrap;
+  justify-content: space-around;
 
   * + * {
     margin-left: 1em;
+  }
+
+  > :not(.controls_points):not(.controls_wildcard) {
+    flex: 0 0 auto;
+  }
+
+  .controls_wildcard {
+    flex: 0 0 150px;
+  }
+
+  .controls_points {
+    flex: 0 0 300px;
   }
 `;
 
@@ -201,14 +215,18 @@ export const GameField = (props: GameFieldProps) => {
           })}
       </Grid>
       <Controls>
-        <button disabled={availableWildcards <= 0} onClick={toggleWildcardMode}>
+        <button
+          className="controls_wildcard"
+          disabled={availableWildcards <= 0}
+          onClick={toggleWildcardMode}
+        >
           {interactionMode === InteractionMode.DEFAULT
             ? "Set Wildcard (" + availableWildcards + " left)"
             : "Cancel"}
         </button>
-        <div>Turns left: {turns}</div>
-        <div>Game State: {gameState}</div>
-        <div>
+        <div className="controls_turns">Turns left: {turns}</div>
+        <div className="controls_game-state">Game State: {gameState}</div>
+        <div className="controls_points">
           Points: {points}{" "}
           {basePoints ? (
             <span>

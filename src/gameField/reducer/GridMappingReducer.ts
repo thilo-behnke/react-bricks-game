@@ -130,13 +130,17 @@ export const GridMappingReducer = (
               isWildcard: true,
             }
           : state.selectedCellPosition;
+      const availableWildcards = state.availableWildcards - 1;
       return {
         ...state,
         grid: updatedGrid,
         selectedCells: updatedCells,
         selectedCellPosition: updatedSelectedCellPosition,
-        availableWildcards: state.availableWildcards - 1,
-        interactionMode: InteractionMode.DEFAULT,
+        availableWildcards,
+        interactionMode:
+          availableWildcards > 0
+            ? state.interactionMode
+            : InteractionMode.DEFAULT,
       };
     case "decrement_turns":
       const turns = Math.max(state.turns - 1, 0);

@@ -14,7 +14,7 @@ const GameWrapper = styled.div`
   display: grid;
   grid-template-rows: auto 1fr auto;
   grid-row-gap: 20px;
-  grid-template-columns: 1fr minmax(min-content, 10fr) 1fr;
+  grid-template-columns: 1fr minmax(min-content, 2fr) 1fr;
   grid-template-areas: "headerLeft header headerRight" "left game right" "footer footer footer";
 `;
 
@@ -23,8 +23,8 @@ const StyledGameField = styled(GameField)`
 `;
 
 function App() {
-  const rows = 30;
-  const cols = 30;
+  const rows = 20;
+  const cols = 20;
   const turns = 20;
   const wildcards = 5;
 
