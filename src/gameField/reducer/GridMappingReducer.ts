@@ -52,6 +52,9 @@ export const GridMappingReducer = (
 
       return { grid: repositionedGrid, selectedCells, selectedCellPosition };
     case "select_cells":
+      if (state.selectedCells.some(({ id }) => id === action.payload.id)) {
+        return state;
+      }
       return {
         ...state,
         selectedCellPosition: action.payload,
