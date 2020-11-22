@@ -3,3 +3,8 @@ export enum Color {
   BLUE = "blue",
   GREEN = "green",
 }
+
+export type GridCoordinates = {
+  row: number;
+  col: number;
+};

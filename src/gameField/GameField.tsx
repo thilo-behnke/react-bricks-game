@@ -52,10 +52,9 @@ export const GameField = (props: GameFieldProps) => {
       default:
         return state;
     }
-    return state;
   }, gridMappingProvider.generateMapping(props.rows, props.cols));
 
-  console.log("rendering", grid);
+  // TODO: On hover: Detect adjacent and set state. Detection could be run in effect? Would that be more performant?
 
   return (
     <Grid {...props}>
