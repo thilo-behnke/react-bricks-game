@@ -2,6 +2,7 @@ export enum Color {
   YELLOW = "yellow",
   BLUE = "blue",
   GREEN = "green",
+  ORANGE = "orange",
 }
 
 export type GridCell = {

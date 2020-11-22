@@ -19,6 +19,28 @@ export class StaticGridMappingProvider implements GridMappingProvider {
   }
 }
 
+export class RandomGridMappingProvider implements GridMappingProvider {
+  generateMapping(rows: number, cols: number): GridMapping {
+    return zipRange(rows, cols).map(([row, col], index: number) => {
+      const rand = Math.random() * 100;
+      const color =
+        rand > 80
+          ? Color.BLUE
+          : rand > 30
+          ? Color.YELLOW
+          : rand > 20
+          ? Color.GREEN
+          : Color.ORANGE;
+      return {
+        id: index,
+        row,
+        col,
+        color,
+      };
+    });
+  }
+}
+
 export const GridMappingProviderContext = React.createContext(
   new StaticGridMappingProvider()
 );

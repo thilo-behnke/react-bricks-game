@@ -4,6 +4,7 @@ import { GameField } from "./gameField/GameField";
 import styled from "styled-components";
 import {
   GridMappingProviderContext,
+  RandomGridMappingProvider,
   StaticGridMappingProvider,
 } from "./mappingProvider/GridMappingProvider";
 
@@ -22,12 +23,12 @@ const StyledGameField = styled(GameField)`
 `;
 
 function App() {
-  const rows = 10;
-  const cols = 10;
+  const rows = 30;
+  const cols = 30;
 
   return (
     <GridMappingProviderContext.Provider
-      value={new StaticGridMappingProvider()}
+      value={new RandomGridMappingProvider()}
     >
       <GameWrapper>
         <StyledGameField rows={rows} cols={cols} />
