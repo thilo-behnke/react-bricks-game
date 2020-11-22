@@ -1,4 +1,10 @@
-import React, { Dispatch, useContext, useReducer } from "react";
+import React, {
+  Dispatch,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import styled from "styled-components";
 import { zipRange } from "../utils/ListUtils";
 import { GameFieldCell } from "./GameFieldCell";
@@ -31,6 +37,10 @@ const Controls = styled.div`
   justify-self: center;
   display: flex;
   flex-flow: row wrap;
+
+  * + * {
+    margin-left: 1em;
+  }
 `;
 
 export const GameField = (props: GameFieldProps) => {
@@ -43,6 +53,7 @@ export const GameField = (props: GameFieldProps) => {
       availableWildcards,
       turns,
       gameState,
+      points,
     },
     dispatch,
   ]: [GridMappingState, Dispatch<GridMappingAction>] = useReducer(
@@ -55,8 +66,23 @@ export const GameField = (props: GameFieldProps) => {
       interactionMode: InteractionMode.DEFAULT,
       turns: props.turns,
       gameState: GameState.RUNNING,
+      points: 0,
     }
   );
+
+  const [basePoints, setBasePoints] = useState<number | null>(null);
+  const [multiplier, setMultiplier] = useState<number | null>(null);
+
+  useEffect(() => {
+    setBasePoints(selectedCells.length * 10);
+  }, [selectedCells]);
+
+  useEffect(() => {
+    if (!selectedCells.length) {
+      setMultiplier(null);
+    }
+    setMultiplier(Math.max(Math.floor(selectedCells.length / 10), 1));
+  }, [selectedCells, basePoints]);
 
   const getCell = (cellRow: number, cellCol: number) => {
     return grid.find(({ row, col }) => row === cellRow && col === cellCol);
@@ -94,6 +120,10 @@ export const GameField = (props: GameFieldProps) => {
     });
     dispatch({
       type: "decrement_turns",
+    });
+    dispatch({
+      type: "add_points",
+      payload: basePoints! * multiplier!,
     });
   };
 
@@ -152,6 +182,14 @@ export const GameField = (props: GameFieldProps) => {
     };
   };
 
+  const pointsForSelected = () => {
+    return (
+      selectedCells.length *
+      10 *
+      Math.max(Math.floor(selectedCells.length / 10) * 100, 1)
+    );
+  };
+
   return (
     <React.Fragment>
       <Grid {...props} onMouseLeave={() => dispatchUnselectCells()}>
@@ -178,6 +216,17 @@ export const GameField = (props: GameFieldProps) => {
         </button>
         <div>Turns left: {turns}</div>
         <div>Game State: {gameState}</div>
+        <div>
+          Points: {points}{" "}
+          {basePoints ? (
+            <span>
+              {" "}
+              + {basePoints}{" "}
+              {multiplier && multiplier > 1 ? " x " + multiplier : ""} (cells:{" "}
+              {selectedCells.length})
+            </span>
+          ) : null}
+        </div>
       </Controls>
     </React.Fragment>
   );

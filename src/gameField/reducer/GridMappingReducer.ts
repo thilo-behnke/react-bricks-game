@@ -20,6 +20,7 @@ export type GridMappingState = {
   availableWildcards: number;
   turns: number;
   interactionMode: InteractionMode;
+  points: number;
 };
 
 export enum InteractionMode {
@@ -39,7 +40,8 @@ export type GridMappingAction =
   | { type: "unselect_cells" }
   | { type: "set_wildcard"; payload: GridCell }
   | { type: "switch_interaction_mode"; payload: InteractionMode }
-  | { type: "decrement_turns" };
+  | { type: "decrement_turns" }
+  | { type: "add_points"; payload: number };
 export const GridMappingReducer = (
   state: GridMappingState,
   action: GridMappingAction
@@ -138,12 +140,16 @@ export const GridMappingReducer = (
       };
     case "decrement_turns":
       const turns = Math.max(state.turns - 1, 0);
-      console.log({ turns });
       const gameState = turns > 0 ? state.gameState : GameState.LOST;
       return {
         ...state,
         gameState,
         turns,
+      };
+    case "add_points":
+      return {
+        ...state,
+        points: state.points + action.payload,
       };
     default:
       return state;

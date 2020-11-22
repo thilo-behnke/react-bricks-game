@@ -26,7 +26,7 @@ function App() {
   const rows = 30;
   const cols = 30;
   const turns = 20;
-  const wildcards = 2;
+  const wildcards = 5;
 
   return (
     <GridMappingProviderContext.Provider
