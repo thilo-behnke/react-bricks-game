@@ -125,7 +125,7 @@ export const GameField = (props: GameFieldProps) => {
         return;
       } else if (
         interactionMode === InteractionMode.WILDCARD &&
-        !cell.isWildCard
+        !cell.isWildcard
       ) {
         dispatchSelectCells(cell, false);
         return;
@@ -144,7 +144,7 @@ export const GameField = (props: GameFieldProps) => {
         return;
       } else if (
         interactionMode === InteractionMode.WILDCARD &&
-        !cell.isWildCard
+        !cell.isWildcard
       ) {
         dispatchSetWildcard(cell);
         return;

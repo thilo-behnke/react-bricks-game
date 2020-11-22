@@ -11,7 +11,7 @@ export type GridCell = {
   row: number;
   col: number;
   color: Color;
-  isWildCard?: boolean;
+  isWildcard?: boolean;
 };
 export type GridMapping = Array<GridCell>;
 

@@ -98,7 +98,7 @@ export const GridMappingReducer = (
     case "unselect_cells":
       return { ...state, selectedCells: [], selectedCellPosition: null };
     case "set_wildcard":
-      if (state.availableWildcards <= 0 || action.payload.isWildCard) {
+      if (state.availableWildcards <= 0 || action.payload.isWildcard) {
         return state;
       }
       // TODO: Maybe just combine them?
@@ -125,7 +125,7 @@ export const GridMappingReducer = (
           ? {
               ...state.selectedCellPosition,
               color: Color._WILDCARD,
-              isWildCard: true,
+              isWildcard: true,
             }
           : state.selectedCellPosition;
       return {

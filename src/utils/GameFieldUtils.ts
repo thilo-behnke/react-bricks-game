@@ -34,10 +34,8 @@ export const getAdjacentWithSameColor = (
     visited[row][col] = true;
 
     const adjacentWithSameColor = potentialAdjacent.filter(
-      ({ color }) =>
-        color === startCell.color ||
-        color === Color._WILDCARD ||
-        startCell.color === Color._WILDCARD
+      ({ color, isWildcard }) =>
+        color === start.color || isWildcard || start.isWildcard
     );
     const adjacentResults = adjacentWithSameColor.reduce(
       (acc: GridMapping, cell) => [...acc, ...inner(cell, grid)],
