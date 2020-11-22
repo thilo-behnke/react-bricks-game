@@ -4,13 +4,21 @@ import {
   getAdjacentWithSameColor,
   repositionGrid,
 } from "../../utils/GameFieldUtils";
-import { Color, GridCell, GridMapping } from "../../model/GameFieldModel";
+import {
+  Color,
+  GameState,
+  GridCell,
+  GridMapping,
+} from "../../model/GameFieldModel";
 
 export type GridMappingState = {
   grid: GridMapping;
   selectedCells: GridMapping;
   selectedCellPosition: GridCell | null;
+
+  gameState: GameState;
   availableWildcards: number;
+  turns: number;
   interactionMode: InteractionMode;
 };
 
@@ -30,7 +38,8 @@ export type GridMappingAction =
     }
   | { type: "unselect_cells" }
   | { type: "set_wildcard"; payload: GridCell }
-  | { type: "switch_interaction_mode"; payload: InteractionMode };
+  | { type: "switch_interaction_mode"; payload: InteractionMode }
+  | { type: "decrement_turns" };
 export const GridMappingReducer = (
   state: GridMappingState,
   action: GridMappingAction
@@ -126,6 +135,15 @@ export const GridMappingReducer = (
         selectedCellPosition: updatedSelectedCellPosition,
         availableWildcards: state.availableWildcards - 1,
         interactionMode: InteractionMode.DEFAULT,
+      };
+    case "decrement_turns":
+      const turns = Math.max(state.turns - 1, 0);
+      console.log({ turns });
+      const gameState = turns > 0 ? state.gameState : GameState.LOST;
+      return {
+        ...state,
+        gameState,
+        turns,
       };
     default:
       return state;

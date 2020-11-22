@@ -9,12 +9,13 @@ import {
   GridMappingState,
   InteractionMode,
 } from "./reducer/GridMappingReducer";
-import { GridCell } from "../model/GameFieldModel";
+import { GameState, GridCell } from "../model/GameFieldModel";
 
 export type GameFieldProps = {
   rows: number;
   cols: number;
   wildCards: number;
+  turns: number;
 };
 
 const Grid = styled.div`
@@ -24,10 +25,25 @@ const Grid = styled.div`
   grid-template-columns: repeat(${(props: GameFieldProps) => props.cols}, 2em);
 `;
 
+const Controls = styled.div`
+  padding-top: 1em;
+  grid-area: header;
+  justify-self: center;
+  display: flex;
+  flex-flow: row wrap;
+`;
+
 export const GameField = (props: GameFieldProps) => {
   const gridMappingProvider = useContext(GridMappingProviderContext);
   const [
-    { grid, selectedCells, interactionMode, availableWildcards },
+    {
+      grid,
+      selectedCells,
+      interactionMode,
+      availableWildcards,
+      turns,
+      gameState,
+    },
     dispatch,
   ]: [GridMappingState, Dispatch<GridMappingAction>] = useReducer(
     GridMappingReducer,
@@ -37,6 +53,8 @@ export const GameField = (props: GameFieldProps) => {
       selectedCellPosition: null,
       availableWildcards: props.wildCards,
       interactionMode: InteractionMode.DEFAULT,
+      turns: props.turns,
+      gameState: GameState.RUNNING,
     }
   );
 
@@ -73,6 +91,9 @@ export const GameField = (props: GameFieldProps) => {
     dispatch({
       type: "remove_cells",
       payload: selectedCells,
+    });
+    dispatch({
+      type: "decrement_turns",
     });
   };
 
@@ -149,11 +170,15 @@ export const GameField = (props: GameFieldProps) => {
             );
           })}
       </Grid>
-      <button disabled={availableWildcards <= 0} onClick={toggleWildcardMode}>
-        {interactionMode === InteractionMode.DEFAULT
-          ? "Set Wildcard"
-          : "Cancel"}
-      </button>
+      <Controls>
+        <button disabled={availableWildcards <= 0} onClick={toggleWildcardMode}>
+          {interactionMode === InteractionMode.DEFAULT
+            ? "Set Wildcard (" + availableWildcards + " left)"
+            : "Cancel"}
+        </button>
+        <div>Turns left: {turns}</div>
+        <div>Game State: {gameState}</div>
+      </Controls>
     </React.Fragment>
   );
 };

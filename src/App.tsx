@@ -15,7 +15,7 @@ const GameWrapper = styled.div`
   grid-template-rows: auto 1fr auto;
   grid-row-gap: 20px;
   grid-template-columns: 1fr minmax(min-content, 10fr) 1fr;
-  grid-template-areas: "header header header" "left game right" "footer footer footer";
+  grid-template-areas: "headerLeft header headerRight" "left game right" "footer footer footer";
 `;
 
 const StyledGameField = styled(GameField)`
@@ -25,13 +25,20 @@ const StyledGameField = styled(GameField)`
 function App() {
   const rows = 30;
   const cols = 30;
+  const turns = 20;
+  const wildcards = 2;
 
   return (
     <GridMappingProviderContext.Provider
       value={new RandomGridMappingProvider()}
     >
       <GameWrapper>
-        <StyledGameField rows={rows} cols={cols} wildCards={2} />
+        <StyledGameField
+          rows={rows}
+          cols={cols}
+          wildCards={wildcards}
+          turns={turns}
+        />
       </GameWrapper>
     </GridMappingProviderContext.Provider>
   );

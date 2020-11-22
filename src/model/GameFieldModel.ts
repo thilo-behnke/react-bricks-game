@@ -14,3 +14,9 @@ export type GridCell = {
   isWildCard?: boolean;
 };
 export type GridMapping = Array<GridCell>;
+
+export enum GameState {
+  RUNNING = "RUNNING",
+  WON = "WON",
+  LOST = "LOST",
+}
