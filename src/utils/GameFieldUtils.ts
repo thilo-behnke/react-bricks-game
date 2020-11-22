@@ -1,6 +1,14 @@
 import { groupBy } from "./ListUtils";
 import { GridCell, GridMapping } from "../model/GameFieldModel";
 
+export const getAdjacent = ({ row, col }: { row: number; col: number }) => {
+  const left = { row, col: col - 1 },
+    right = { row, col: col + 1 },
+    up = { row: row - 1, col },
+    down = { row: row + 1, col };
+  return [left, right, up, down];
+};
+
 export const getAdjacentWithSameColor = (
   start: GridCell,
   grid: GridMapping
@@ -15,11 +23,7 @@ export const getAdjacentWithSameColor = (
   let visited: { [row: number]: { [col: number]: true } } = {};
   const inner = (start: GridCell, grid: GridMapping): GridMapping => {
     const { row, col } = start;
-    const left = { row, col: col - 1 },
-      right = { row, col: col + 1 },
-      up = { row: row - 1, col },
-      down = { row: row + 1, col };
-    const potentialAdjacent = [left, right, up, down]
+    const potentialAdjacent = getAdjacent(start)
       .filter(({ row, col }) => !visited[row]?.[col])
       .map(({ row, col }) =>
         grid.find(
