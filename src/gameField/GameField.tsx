@@ -9,7 +9,6 @@ import {
   GridMappingProviderContext,
 } from "../mappingProvider/GridMappingProvider";
 import { GridMappingReducer } from "./reducer/GridMappingReducer";
-import { getAdjacentWithSameColor } from "../utils/GameFieldUtils";
 
 export type GameFieldProps = {
   rows: number;
@@ -47,10 +46,10 @@ export const GameField = (props: GameFieldProps) => {
     );
   };
 
-  const dispatchSelectCells = (cellPosition: GridCell, cells: GridMapping) => {
+  const dispatchSelectCells = (cellPosition: GridCell) => {
     dispatch({
       type: "select_cells",
-      payload: { cells, cellPosition },
+      payload: cellPosition,
     });
   };
 
@@ -75,14 +74,7 @@ export const GameField = (props: GameFieldProps) => {
           const cell = getCell(row, col);
           return (
             <GameFieldCell
-              onMouseEnter={() =>
-                cell
-                  ? dispatchSelectCells(
-                      cell,
-                      getAdjacentWithSameColor(cell, grid)
-                    )
-                  : null
-              }
+              onMouseEnter={() => (cell ? dispatchSelectCells(cell) : null)}
               isSelected={isSelected(cell)}
               key={`${row}/${col}`}
               color={cell?.color}

@@ -48,8 +48,10 @@ export const GridMappingReducer = (
     case "select_cells":
       return {
         ...state,
-        selectedCells: action.payload.cells,
-        selectedCellPosition: action.payload.cellPosition,
+        selectedCellPosition: action.payload,
+        selectedCells: action.payload
+          ? getAdjacentWithSameColor(action.payload, state.grid)
+          : [],
       };
     case "unselect_cells":
       return { ...state, selectedCells: [], selectedCellPosition: null };

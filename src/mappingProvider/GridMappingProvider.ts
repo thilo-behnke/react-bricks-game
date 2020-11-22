@@ -22,7 +22,7 @@ export type GridMappingAction =
     }
   | {
       type: "select_cells";
-      payload: { cells: GridMapping; cellPosition: GridCell };
+      payload: GridCell;
     }
   | { type: "unselect_cells" };
 
