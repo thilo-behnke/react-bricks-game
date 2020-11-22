@@ -1,6 +1,5 @@
 import { getAdjacentWithSameColor, repositionGrid } from "./GameFieldUtils";
-import { Color } from "../model/GameFieldModel";
-import { GridMapping } from "../mappingProvider/GridMappingProvider";
+import { Color, GridMapping } from "../model/GameFieldModel";
 
 describe("GameFieldUtils", () => {
   describe("GameFieldUtils.getAdjacentWithSameColor", () => {

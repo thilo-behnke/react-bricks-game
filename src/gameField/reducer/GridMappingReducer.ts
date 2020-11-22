@@ -1,15 +1,21 @@
-import {
-  GridCell,
-  GridMapping,
-  GridMappingAction,
-} from "../../mappingProvider/GridMappingProvider";
 import { difference } from "../../utils/ListUtils";
 import {
   areCellsEqual,
   getAdjacentWithSameColor,
   repositionGrid,
 } from "../../utils/GameFieldUtils";
+import { GridCell, GridMapping } from "../../model/GameFieldModel";
 
+export type GridMappingAction =
+  | {
+      type: "remove_cells";
+      payload: GridMapping;
+    }
+  | {
+      type: "select_cells";
+      payload: GridCell;
+    }
+  | { type: "unselect_cells" };
 export const GridMappingReducer = (
   state: {
     grid: GridMapping;

@@ -2,13 +2,12 @@ import React, { Dispatch, useContext, useReducer } from "react";
 import styled from "styled-components";
 import { zipRange } from "../utils/ListUtils";
 import { GameFieldCell } from "./GameFieldCell";
+import { GridMappingProviderContext } from "../mappingProvider/GridMappingProvider";
 import {
-  GridCell,
-  GridMapping,
   GridMappingAction,
-  GridMappingProviderContext,
-} from "../mappingProvider/GridMappingProvider";
-import { GridMappingReducer } from "./reducer/GridMappingReducer";
+  GridMappingReducer,
+} from "./reducer/GridMappingReducer";
+import { GridCell, GridMapping } from "../model/GameFieldModel";
 
 export type GameFieldProps = {
   rows: number;

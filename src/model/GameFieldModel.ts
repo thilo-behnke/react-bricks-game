@@ -4,7 +4,10 @@ export enum Color {
   GREEN = "green",
 }
 
-export type GridCoordinates = {
+export type GridCell = {
+  id: number;
   row: number;
   col: number;
+  color: Color;
 };
+export type GridMapping = Array<GridCell>;
