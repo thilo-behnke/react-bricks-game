@@ -2,7 +2,6 @@ import React from "react";
 import "./App.css";
 import { GameField } from "./gameField/GameField";
 import styled from "styled-components";
-import { Color } from "./model/GameFieldModel";
 import {
   GridMappingProviderContext,
   StaticGridMappingProvider,

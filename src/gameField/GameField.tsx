@@ -1,13 +1,13 @@
-import React, { Dispatch, useContext, useReducer, useState } from "react";
+import React, { Dispatch, useContext, useReducer } from "react";
 import styled from "styled-components";
 import { zipRange } from "../utils/ListUtils";
 import { GameFieldCell } from "./GameFieldCell";
-import { Color } from "../model/GameFieldModel";
 import {
   GridMapping,
   GridMappingAction,
   GridMappingProviderContext,
 } from "../mappingProvider/GridMappingProvider";
+import { GridMappingReducer } from "./reducer/GridMappingReducer";
 
 export type GameFieldProps = {
   rows: number;
@@ -26,19 +26,10 @@ export const GameField = (props: GameFieldProps) => {
   const [grid, dispatch]: [
     GridMapping,
     Dispatch<GridMappingAction>
-  ] = useReducer((state: GridMapping, action: GridMappingAction) => {
-    switch (action.type) {
-      case "remove_cell":
-        const {
-          payload: { row: cellRow, col: cellCol },
-        } = action;
-        return state.filter(
-          ({ row, col }) => row !== cellRow || col !== cellCol
-        );
-      default:
-        return state;
-    }
-  }, gridMappingProvider.generateMapping(props.rows, props.cols));
+  ] = useReducer(
+    GridMappingReducer,
+    gridMappingProvider.generateMapping(props.rows, props.cols)
+  );
 
   const getColor = (cellRow: number, cellCol: number) => {
     const cell = grid.find(
@@ -54,6 +45,7 @@ export const GameField = (props: GameFieldProps) => {
       {zipRange(props.rows, props.cols).map(([row, col]) => {
         return (
           <GameFieldCell
+            onMouseEnter={console.log}
             key={`${row}/${col}`}
             color={getColor(row, col)}
             onClick={() =>

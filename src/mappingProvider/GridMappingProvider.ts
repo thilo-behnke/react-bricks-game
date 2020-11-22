@@ -1,6 +1,6 @@
 import { Color } from "../model/GameFieldModel";
 import { zipRange } from "../utils/ListUtils";
-import React, { ReducerAction } from "react";
+import React from "react";
 
 export interface GridMappingProvider {
   generateMapping: (rows: number, cols: number) => GridMapping;

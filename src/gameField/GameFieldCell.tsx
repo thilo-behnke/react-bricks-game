@@ -5,6 +5,7 @@ import { Color } from "../model/GameFieldModel";
 export type GameFieldCellProps = {
   color?: Color;
   onClick: () => void;
+  onMouseEnter: () => void;
 };
 
 const Cell = styled.div`
@@ -13,5 +14,11 @@ const Cell = styled.div`
 `;
 
 export const GameFieldCell = (props: GameFieldCellProps) => {
-  return <Cell onClick={props.onClick} color={props.color?.toString()} />;
+  return (
+    <Cell
+      onClick={props.onClick}
+      onMouseEnter={props.onMouseEnter}
+      color={props.color?.toString()}
+    />
+  );
 };

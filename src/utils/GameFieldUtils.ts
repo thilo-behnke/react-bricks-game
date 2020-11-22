@@ -1,5 +1,4 @@
 import { GridCell, GridMapping } from "../mappingProvider/GridMappingProvider";
-import { Color, GridCoordinates } from "../model/GameFieldModel";
 import { omit } from "./ObjectUtils";
 
 export const getAdjacentWithSameColor = (
