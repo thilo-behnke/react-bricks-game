@@ -3,6 +3,7 @@ import "./App.css";
 import { GameField } from "./gameField/GameField";
 import styled from "styled-components";
 import {
+  ClusteringRandomGridMappingProvider,
   GridMappingProviderContext,
   RandomGridMappingProvider,
 } from "./mappingProvider/GridMappingProvider";
@@ -29,7 +30,7 @@ function App() {
 
   return (
     <GridMappingProviderContext.Provider
-      value={new RandomGridMappingProvider()}
+      value={new ClusteringRandomGridMappingProvider()}
     >
       <GameWrapper>
         <StyledGameField
