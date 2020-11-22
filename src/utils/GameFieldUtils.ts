@@ -1,5 +1,5 @@
 import { groupBy } from "./ListUtils";
-import { Color, GridCell, GridMapping } from "../model/GameFieldModel";
+import { GridCell, GridMapping } from "../model/GameFieldModel";
 
 export const getAdjacentWithSameColor = (
   start: GridCell,

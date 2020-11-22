@@ -182,14 +182,6 @@ export const GameField = (props: GameFieldProps) => {
     };
   };
 
-  const pointsForSelected = () => {
-    return (
-      selectedCells.length *
-      10 *
-      Math.max(Math.floor(selectedCells.length / 10) * 100, 1)
-    );
-  };
-
   return (
     <React.Fragment>
       <Grid {...props} onMouseLeave={() => dispatchUnselectCells()}>
