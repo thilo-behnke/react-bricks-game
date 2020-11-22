@@ -39,6 +39,7 @@ export class RandomGridMappingProvider implements GridMappingProvider {
 export class ClusteringRandomGridMappingProvider
   implements GridMappingProvider {
   generateMapping(rows: number, cols: number): GridMapping {
+    // TODO: Shuffle array.
     return zipRange(rows, cols).reduce((acc, [row, col], index: number) => {
       const adjacent = getAdjacent({ row, col });
       const adjacentCells = adjacent
