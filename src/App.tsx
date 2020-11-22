@@ -31,7 +31,7 @@ function App() {
       value={new RandomGridMappingProvider()}
     >
       <GameWrapper>
-        <StyledGameField rows={rows} cols={cols} />
+        <StyledGameField rows={rows} cols={cols} wildCards={2} />
       </GameWrapper>
     </GridMappingProviderContext.Provider>
   );

@@ -4,7 +4,20 @@ import {
   getAdjacentWithSameColor,
   repositionGrid,
 } from "../../utils/GameFieldUtils";
-import { GridCell, GridMapping } from "../../model/GameFieldModel";
+import { Color, GridCell, GridMapping } from "../../model/GameFieldModel";
+
+export type GridMappingState = {
+  grid: GridMapping;
+  selectedCells: GridMapping;
+  selectedCellPosition: GridCell | null;
+  availableWildcards: number;
+  interactionMode: InteractionMode;
+};
+
+export enum InteractionMode {
+  DEFAULT = "DEFAULT",
+  WILDCARD = "WILDCARD",
+}
 
 export type GridMappingAction =
   | {
@@ -13,18 +26,18 @@ export type GridMappingAction =
     }
   | {
       type: "select_cells";
-      payload: GridCell;
+      payload: { cellPosition: GridCell; expandToAdjacent: boolean };
     }
-  | { type: "unselect_cells" };
+  | { type: "unselect_cells" }
+  | { type: "set_wildcard"; payload: GridCell }
+  | { type: "switch_interaction_mode"; payload: InteractionMode };
 export const GridMappingReducer = (
-  state: {
-    grid: GridMapping;
-    selectedCells: GridMapping;
-    selectedCellPosition: GridCell | null;
-  },
+  state: GridMappingState,
   action: GridMappingAction
-) => {
+): GridMappingState => {
   switch (action.type) {
+    case "switch_interaction_mode":
+      return { ...state, interactionMode: action.payload };
     case "remove_cells":
       const { payload } = action;
       const grid = difference(state.grid, payload, areCellsEqual);
@@ -50,20 +63,70 @@ export const GridMappingReducer = (
         selectedCellPosition = newSelectedCellPosition;
       }
 
-      return { grid: repositionedGrid, selectedCells, selectedCellPosition };
+      return {
+        ...state,
+        grid: repositionedGrid,
+        selectedCells,
+        selectedCellPosition,
+      };
     case "select_cells":
-      if (state.selectedCells.some(({ id }) => id === action.payload.id)) {
+      if (
+        state.selectedCells.some(
+          ({ id }) => id === action.payload.cellPosition.id
+        )
+      ) {
         return state;
       }
       return {
         ...state,
-        selectedCellPosition: action.payload,
+        selectedCellPosition: action.payload.cellPosition,
         selectedCells: action.payload
-          ? getAdjacentWithSameColor(action.payload, state.grid)
+          ? action.payload.expandToAdjacent
+            ? getAdjacentWithSameColor(action.payload.cellPosition, state.grid)
+            : [action.payload.cellPosition]
           : [],
       };
     case "unselect_cells":
       return { ...state, selectedCells: [], selectedCellPosition: null };
+    case "set_wildcard":
+      if (state.availableWildcards <= 0 || action.payload.isWildCard) {
+        return state;
+      }
+      // TODO: Maybe just combine them?
+      const updatedGrid = state.grid.map((cell) =>
+        cell.id === action.payload.id
+          ? {
+              ...cell,
+              color: Color._WILDCARD,
+              isWildcard: true,
+            }
+          : cell
+      );
+      const updatedCells = state.selectedCells.map((cell) =>
+        cell.id === action.payload.id
+          ? {
+              ...cell,
+              color: Color._WILDCARD,
+              isWildcard: true,
+            }
+          : cell
+      );
+      const updatedSelectedCellPosition =
+        state.selectedCellPosition?.id === action.payload.id
+          ? {
+              ...state.selectedCellPosition,
+              color: Color._WILDCARD,
+              isWildCard: true,
+            }
+          : state.selectedCellPosition;
+      return {
+        ...state,
+        grid: updatedGrid,
+        selectedCells: updatedCells,
+        selectedCellPosition: updatedSelectedCellPosition,
+        availableWildcards: state.availableWildcards - 1,
+        interactionMode: InteractionMode.DEFAULT,
+      };
     default:
       return state;
   }

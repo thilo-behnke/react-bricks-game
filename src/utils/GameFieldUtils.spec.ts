@@ -31,6 +31,19 @@ describe("GameFieldUtils", () => {
       // then
       expect(res).toEqual(grid);
     });
+    it("should find adjacent node if there is a wildcard in between", () => {
+      // given
+      const start = { id: 1, row: 11, col: 5, color: Color.BLUE };
+      const adjacent = [
+        { id: 2, row: 11, col: 6, color: Color._WILDCARD, isWildcard: true },
+        { id: 2, row: 11, col: 7, color: Color.BLUE },
+      ];
+      const grid: GridMapping = [start, ...adjacent];
+      // when
+      const res = getAdjacentWithSameColor(start, grid);
+      // then
+      expect(res).toEqual(grid);
+    });
   });
 
   describe("GameFieldUtils.repositionGrid", () => {

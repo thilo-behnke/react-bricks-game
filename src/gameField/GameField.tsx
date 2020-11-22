@@ -6,12 +6,15 @@ import { GridMappingProviderContext } from "../mappingProvider/GridMappingProvid
 import {
   GridMappingAction,
   GridMappingReducer,
+  GridMappingState,
+  InteractionMode,
 } from "./reducer/GridMappingReducer";
-import { GridCell, GridMapping } from "../model/GameFieldModel";
+import { GridCell } from "../model/GameFieldModel";
 
 export type GameFieldProps = {
   rows: number;
   cols: number;
+  wildCards: number;
 };
 
 const Grid = styled.div`
@@ -23,14 +26,19 @@ const Grid = styled.div`
 
 export const GameField = (props: GameFieldProps) => {
   const gridMappingProvider = useContext(GridMappingProviderContext);
-  const [{ grid, selectedCells }, dispatch]: [
-    { grid: GridMapping; selectedCells: GridMapping },
-    Dispatch<GridMappingAction>
-  ] = useReducer(GridMappingReducer, {
-    grid: gridMappingProvider.generateMapping(props.rows, props.cols),
-    selectedCells: [],
-    selectedCellPosition: null,
-  });
+  const [
+    { grid, selectedCells, interactionMode, availableWildcards },
+    dispatch,
+  ]: [GridMappingState, Dispatch<GridMappingAction>] = useReducer(
+    GridMappingReducer,
+    {
+      grid: gridMappingProvider.generateMapping(props.rows, props.cols),
+      selectedCells: [],
+      selectedCellPosition: null,
+      availableWildcards: props.wildCards,
+      interactionMode: InteractionMode.DEFAULT,
+    }
+  );
 
   const getCell = (cellRow: number, cellCol: number) => {
     return grid.find(({ row, col }) => row === cellRow && col === cellCol);
@@ -45,10 +53,13 @@ export const GameField = (props: GameFieldProps) => {
     );
   };
 
-  const dispatchSelectCells = (cellPosition: GridCell) => {
+  const dispatchSelectCells = (
+    cellPosition: GridCell,
+    expandToAdjacent = true
+  ) => {
     dispatch({
       type: "select_cells",
-      payload: cellPosition,
+      payload: { cellPosition, expandToAdjacent },
     });
   };
 
@@ -65,22 +76,84 @@ export const GameField = (props: GameFieldProps) => {
     });
   };
 
+  const toggleWildcardMode = () => {
+    dispatch({
+      type: "switch_interaction_mode",
+      payload:
+        interactionMode === InteractionMode.WILDCARD
+          ? InteractionMode.DEFAULT
+          : InteractionMode.WILDCARD,
+    });
+  };
+
+  const dispatchSetWildcard = (cell: GridCell) => {
+    dispatch({
+      type: "set_wildcard",
+      payload: cell,
+    });
+  };
+
+  const handleCellMouseEnter = (cell?: GridCell) => {
+    return () => {
+      if (!cell) {
+        return;
+      }
+
+      if (interactionMode === InteractionMode.DEFAULT) {
+        dispatchSelectCells(cell);
+        return;
+      } else if (
+        interactionMode === InteractionMode.WILDCARD &&
+        !cell.isWildCard
+      ) {
+        dispatchSelectCells(cell, false);
+        return;
+      }
+    };
+  };
+
+  const handleCellClick = (cell?: GridCell) => {
+    return () => {
+      if (!cell) {
+        return;
+      }
+
+      if (interactionMode === InteractionMode.DEFAULT) {
+        dispatchRemoveCells();
+        return;
+      } else if (
+        interactionMode === InteractionMode.WILDCARD &&
+        !cell.isWildCard
+      ) {
+        dispatchSetWildcard(cell);
+        return;
+      }
+    };
+  };
+
   return (
-    <Grid {...props} onMouseLeave={() => dispatchUnselectCells()}>
-      {zipRange(props.rows, props.cols)
-        .reverse()
-        .map(([row, col]) => {
-          const cell = getCell(row, col);
-          return (
-            <GameFieldCell
-              onMouseEnter={() => (cell ? dispatchSelectCells(cell) : null)}
-              isSelected={isSelected(cell)}
-              key={`${row}/${col}`}
-              color={cell?.color}
-              onClick={dispatchRemoveCells}
-            />
-          );
-        })}
-    </Grid>
+    <React.Fragment>
+      <Grid {...props} onMouseLeave={() => dispatchUnselectCells()}>
+        {zipRange(props.rows, props.cols)
+          .reverse()
+          .map(([row, col]) => {
+            const cell = getCell(row, col);
+            return (
+              <GameFieldCell
+                onMouseEnter={handleCellMouseEnter(cell)}
+                isSelected={isSelected(cell)}
+                key={`${row}/${col}`}
+                color={cell?.color}
+                onClick={handleCellClick(cell)}
+              />
+            );
+          })}
+      </Grid>
+      <button disabled={availableWildcards <= 0} onClick={toggleWildcardMode}>
+        {interactionMode === InteractionMode.DEFAULT
+          ? "Set Wildcard"
+          : "Cancel"}
+      </button>
+    </React.Fragment>
   );
 };

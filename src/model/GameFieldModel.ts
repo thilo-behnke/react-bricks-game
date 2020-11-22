@@ -3,6 +3,7 @@ export enum Color {
   BLUE = "blue",
   GREEN = "green",
   ORANGE = "orange",
+  _WILDCARD = "purple",
 }
 
 export type GridCell = {
@@ -10,5 +11,6 @@ export type GridCell = {
   row: number;
   col: number;
   color: Color;
+  isWildCard?: boolean;
 };
 export type GridMapping = Array<GridCell>;
