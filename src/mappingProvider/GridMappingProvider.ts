@@ -7,6 +7,7 @@ export interface GridMappingProvider {
 }
 
 export type GridCell = {
+  id: number;
   row: number;
   col: number;
   color: Color;
@@ -17,14 +18,19 @@ export type GridMapping = Array<GridCell>;
 export type GridMappingAction =
   | {
       type: "remove_cells";
-      payload: GridCell[];
+      payload: GridMapping;
     }
-  | { type: "update_grid"; payload: GridMapping };
+  | { type: "select_cells"; payload: GridMapping };
 
 export class StaticGridMappingProvider implements GridMappingProvider {
   generateMapping(rows: number, cols: number): GridMapping {
-    return zipRange(rows, cols).map(([row, col]) => {
-      return { row, col, color: row % 4 === 0 ? Color.YELLOW : Color.BLUE };
+    return zipRange(rows, cols).map(([row, col], index: number) => {
+      return {
+        id: index,
+        row,
+        col,
+        color: row % 4 === 0 ? Color.YELLOW : Color.BLUE,
+      };
     });
   }
 }

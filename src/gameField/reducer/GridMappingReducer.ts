@@ -3,18 +3,23 @@ import {
   GridMappingAction,
 } from "../../mappingProvider/GridMappingProvider";
 import { difference } from "../../utils/ListUtils";
-import { areCellsEqual } from "../../utils/GameFieldUtils";
+import { areCellsEqual, repositionGrid } from "../../utils/GameFieldUtils";
 
 export const GridMappingReducer = (
-  state: GridMapping,
+  state: { grid: GridMapping; selectedCells: GridMapping },
   action: GridMappingAction
 ) => {
   switch (action.type) {
     case "remove_cells":
       const { payload } = action;
-      return difference(state, payload, areCellsEqual);
-    case "update_grid":
-      return action.payload;
+      const grid = difference(state.grid, payload, areCellsEqual);
+      const [repositionedGrid, wasUpdated] = repositionGrid(grid);
+      const selectedCells = state.selectedCells
+        .map(({ id }) => grid.find(({ id: cellId }) => id === cellId))
+        .filter(Boolean) as GridMapping;
+      return { grid: repositionedGrid, selectedCells };
+    case "select_cells":
+      return { ...state, selectedCells: action.payload };
     default:
       return state;
   }
