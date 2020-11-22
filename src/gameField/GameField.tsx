@@ -1,8 +1,9 @@
-import React, { Dispatch, useContext, useReducer } from "react";
+import React, { Dispatch, useContext, useReducer, useState } from "react";
 import styled from "styled-components";
 import { zipRange } from "../utils/ListUtils";
 import { GameFieldCell } from "./GameFieldCell";
 import {
+  GridCell,
   GridMapping,
   GridMappingAction,
   GridMappingProviderContext,
@@ -31,11 +32,10 @@ export const GameField = (props: GameFieldProps) => {
     gridMappingProvider.generateMapping(props.rows, props.cols)
   );
 
-  const getColor = (cellRow: number, cellCol: number) => {
-    const cell = grid.find(
-      ({ row, col }) => row === cellRow && col === cellCol
-    );
-    return cell?.color;
+  const [selectedCell, setSelectedCell] = useState<GridCell | null>(null);
+
+  const getCell = (cellRow: number, cellCol: number) => {
+    return grid.find(({ row, col }) => row === cellRow && col === cellCol);
   };
 
   // TODO: On hover: Detect adjacent and set state. Detection could be run in effect? Would that be more performant?
@@ -43,11 +43,13 @@ export const GameField = (props: GameFieldProps) => {
   return (
     <Grid {...props}>
       {zipRange(props.rows, props.cols).map(([row, col]) => {
+        const cell = getCell(row, col);
         return (
           <GameFieldCell
-            onMouseEnter={console.log}
+            onMouseEnter={() => (cell ? setSelectedCell(cell) : null)}
+            isSelected={selectedCell?.row === row && selectedCell?.col === col}
             key={`${row}/${col}`}
-            color={getColor(row, col)}
+            color={cell?.color}
             onClick={() =>
               dispatch({
                 type: "remove_cell",
