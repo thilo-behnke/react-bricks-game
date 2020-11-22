@@ -31,6 +31,7 @@ export const GameField = (props: GameFieldProps) => {
   ] = useReducer(GridMappingReducer, {
     grid: gridMappingProvider.generateMapping(props.rows, props.cols),
     selectedCells: [],
+    selectedCellPosition: null,
   });
 
   const getCell = (cellRow: number, cellCol: number) => {
@@ -46,10 +47,16 @@ export const GameField = (props: GameFieldProps) => {
     );
   };
 
-  const dispatchSelectCells = (cells: GridMapping) => {
+  const dispatchSelectCells = (cellPosition: GridCell, cells: GridMapping) => {
     dispatch({
       type: "select_cells",
-      payload: cells,
+      payload: { cells, cellPosition },
+    });
+  };
+
+  const dispatchUnselectCells = () => {
+    dispatch({
+      type: "unselect_cells",
     });
   };
 
@@ -61,7 +68,7 @@ export const GameField = (props: GameFieldProps) => {
   };
 
   return (
-    <Grid {...props} onMouseLeave={() => dispatchSelectCells([])}>
+    <Grid {...props} onMouseLeave={() => dispatchUnselectCells()}>
       {zipRange(props.rows, props.cols)
         .reverse()
         .map(([row, col]) => {
@@ -70,7 +77,10 @@ export const GameField = (props: GameFieldProps) => {
             <GameFieldCell
               onMouseEnter={() =>
                 cell
-                  ? dispatchSelectCells(getAdjacentWithSameColor(cell, grid))
+                  ? dispatchSelectCells(
+                      cell,
+                      getAdjacentWithSameColor(cell, grid)
+                    )
                   : null
               }
               isSelected={isSelected(cell)}

@@ -20,7 +20,11 @@ export type GridMappingAction =
       type: "remove_cells";
       payload: GridMapping;
     }
-  | { type: "select_cells"; payload: GridMapping };
+  | {
+      type: "select_cells";
+      payload: { cells: GridMapping; cellPosition: GridCell };
+    }
+  | { type: "unselect_cells" };
 
 export class StaticGridMappingProvider implements GridMappingProvider {
   generateMapping(rows: number, cols: number): GridMapping {
