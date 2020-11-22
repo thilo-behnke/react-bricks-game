@@ -5,7 +5,6 @@ import styled from "styled-components";
 import {
   ClusteringRandomGridMappingProvider,
   GridMappingProviderContext,
-  RandomGridMappingProvider,
 } from "./mappingProvider/GridMappingProvider";
 
 const GameWrapper = styled.div`
