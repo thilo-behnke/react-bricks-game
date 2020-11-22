@@ -29,3 +29,21 @@ export const difference = <T>(
     (elemA: T) => !listB.some((elemB: T) => equals(elemA, elemB))
   );
 };
+
+export const groupBy = <T>(
+  list: T[],
+  key: string
+): Array<{ key: any; items: T[] }> => {
+  return list.reduce((acc: Array<{ key: any; items: T[] }>, val: T) => {
+    const valKey = (val as any)[key];
+    const existingGroup = acc.find(({ key: accKey }) => valKey === accKey);
+    if (!existingGroup) {
+      return [...acc, { key: valKey, items: [val] }];
+    }
+    const accWithoutGroup = acc.filter(({ key }) => key !== valKey);
+    return [
+      ...accWithoutGroup,
+      { ...existingGroup, items: [...existingGroup.items, val] },
+    ];
+  }, []);
+};

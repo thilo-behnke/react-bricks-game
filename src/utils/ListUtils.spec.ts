@@ -1,4 +1,4 @@
-import { difference, range, zip, zipRange } from "./ListUtils";
+import { difference, groupBy, range, zip, zipRange } from "./ListUtils";
 
 describe("ListUtils", () => {
   describe("ListUtils.range", () => {
@@ -85,6 +85,32 @@ describe("ListUtils", () => {
       const b = [{ a: 3, b: "test" }];
       const res = difference<ElemType>(a, b, equals);
       expect(res).toEqual([{ a: 44, b: "hello" }]);
+    });
+  });
+
+  describe("ListUtils.groupBy", () => {
+    it("should return empty list for list = []", () => {
+      const res = groupBy([], "a");
+      expect(res).toEqual([]);
+    });
+    it("should group list by key", () => {
+      const list = [
+        { a: 10, b: "hello" },
+        { a: 10, b: "world" },
+        { a: 3, b: "oh no" },
+      ];
+      const res = groupBy(list, "a");
+      const expected = [
+        {
+          key: 10,
+          items: [
+            { a: 10, b: "hello" },
+            { a: 10, b: "world" },
+          ],
+        },
+        { key: 3, items: [{ a: 3, b: "oh no" }] },
+      ];
+      expect(res).toEqual(expected);
     });
   });
 });

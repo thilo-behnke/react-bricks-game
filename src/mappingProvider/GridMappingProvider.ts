@@ -14,10 +14,12 @@ export type GridCell = {
 
 export type GridMapping = Array<GridCell>;
 
-export type GridMappingAction = {
-  type: "remove_cells";
-  payload: GridCell[];
-};
+export type GridMappingAction =
+  | {
+      type: "remove_cells";
+      payload: GridCell[];
+    }
+  | { type: "update_grid"; payload: GridMapping };
 
 export class StaticGridMappingProvider implements GridMappingProvider {
   generateMapping(rows: number, cols: number): GridMapping {

@@ -1,4 +1,10 @@
-import React, { Dispatch, useContext, useReducer, useState } from "react";
+import React, {
+  Dispatch,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import styled from "styled-components";
 import { zipRange } from "../utils/ListUtils";
 import { GameFieldCell } from "./GameFieldCell";
@@ -9,7 +15,10 @@ import {
   GridMappingProviderContext,
 } from "../mappingProvider/GridMappingProvider";
 import { GridMappingReducer } from "./reducer/GridMappingReducer";
-import { getAdjacentWithSameColor } from "../utils/GameFieldUtils";
+import {
+  getAdjacentWithSameColor,
+  repositionGrid,
+} from "../utils/GameFieldUtils";
 
 export type GameFieldProps = {
   rows: number;
@@ -55,24 +64,41 @@ export const GameField = (props: GameFieldProps) => {
     });
   };
 
+  const dispatchGridUpdate = (newGrid: GridMapping) => {
+    dispatch({
+      type: "update_grid",
+      payload: newGrid,
+    });
+  };
+
+  useEffect(() => {
+    console.log(grid);
+    const [newGrid, wasUpdated] = repositionGrid(grid);
+    if (wasUpdated) {
+      dispatchGridUpdate(newGrid);
+    }
+  }, [grid]);
+
   return (
     <Grid {...props} onMouseLeave={() => setSelectedCells([])}>
-      {zipRange(props.rows, props.cols).map(([row, col]) => {
-        const cell = getCell(row, col);
-        return (
-          <GameFieldCell
-            onMouseEnter={() =>
-              cell
-                ? setSelectedCells(getAdjacentWithSameColor(cell, grid))
-                : null
-            }
-            isSelected={isSelected(cell)}
-            key={`${row}/${col}`}
-            color={cell?.color}
-            onClick={dispatchRemoveCells}
-          />
-        );
-      })}
+      {zipRange(props.rows, props.cols)
+        .reverse()
+        .map(([row, col]) => {
+          const cell = getCell(row, col);
+          return (
+            <GameFieldCell
+              onMouseEnter={() =>
+                cell
+                  ? setSelectedCells(getAdjacentWithSameColor(cell, grid))
+                  : null
+              }
+              isSelected={isSelected(cell)}
+              key={`${row}/${col}`}
+              color={cell?.color}
+              onClick={dispatchRemoveCells}
+            />
+          );
+        })}
     </Grid>
   );
 };

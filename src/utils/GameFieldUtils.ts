@@ -1,4 +1,5 @@
 import { GridCell, GridMapping } from "../mappingProvider/GridMappingProvider";
+import { groupBy } from "./ListUtils";
 
 export const getAdjacentWithSameColor = (
   start: GridCell,
@@ -43,6 +44,27 @@ export const getAdjacentWithSameColor = (
     return [start, ...adjacentResults];
   };
   return inner({ ...start, ...startCell }, grid);
+};
+
+export const repositionGrid = (grid: GridMapping): [GridMapping, boolean] => {
+  let wasUpdated = false;
+  const groupedByCol = groupBy(grid, "col");
+  const newGrid = groupedByCol
+    .map(({ items: cells }) => {
+      return cells.map((cell: GridCell, index: number) => {
+        const isCellPositionedCorrectly = cell.row === index;
+        if (!isCellPositionedCorrectly) {
+          wasUpdated = true;
+          return { ...cell, row: index };
+        }
+        return cell;
+      });
+    })
+    .reduce((acc: GridMapping, colGroup) => {
+      // TODO: Improve - this rearranges the grid, no longer by row, but by col!
+      return [...acc, ...Object.values(colGroup)];
+    }, []);
+  return [newGrid, wasUpdated];
 };
 
 export const areCellsEqual = (cellA: GridCell, cellB: GridCell) => {

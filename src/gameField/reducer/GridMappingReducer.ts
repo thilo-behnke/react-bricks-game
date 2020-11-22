@@ -13,6 +13,8 @@ export const GridMappingReducer = (
     case "remove_cells":
       const { payload } = action;
       return difference(state, payload, areCellsEqual);
+    case "update_grid":
+      return action.payload;
     default:
       return state;
   }
