@@ -1,5 +1,4 @@
 import { GridCell, GridMapping } from "../mappingProvider/GridMappingProvider";
-import { omit } from "./ObjectUtils";
 
 export const getAdjacentWithSameColor = (
   start: GridCell,
@@ -41,7 +40,11 @@ export const getAdjacentWithSameColor = (
       []
     );
 
-    return [omit(start, "color"), ...adjacentResults];
+    return [start, ...adjacentResults];
   };
   return inner({ ...start, ...startCell }, grid);
+};
+
+export const areCellsEqual = (cellA: GridCell, cellB: GridCell) => {
+  return cellA.row === cellB.row && cellA.col === cellB.col;
 };

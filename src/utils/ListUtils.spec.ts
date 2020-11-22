@@ -1,4 +1,4 @@
-import { range, zip, zipRange } from "./ListUtils";
+import { difference, range, zip, zipRange } from "./ListUtils";
 
 describe("ListUtils", () => {
   describe("ListUtils.range", () => {
@@ -57,6 +57,34 @@ describe("ListUtils", () => {
         [3, 0],
         [3, 1],
       ]);
+    });
+  });
+
+  describe("ListUtils.difference", () => {
+    type ElemType = {
+      a: number;
+      b: string;
+    };
+    const equals = (elemA: ElemType, elemB: ElemType) => {
+      return elemA.a === elemB.a && elemA.b === elemB.b;
+    };
+    it("should return empty list for a = [] and b = []", () => {
+      const res = difference<ElemType>([], [], equals);
+      expect(res).toEqual([]);
+    });
+    it("should return a if b = []", () => {
+      const a = [{ a: 3, b: "test" }];
+      const res = difference<ElemType>(a, [], equals);
+      expect(res).toEqual(a);
+    });
+    it("should return difference of a and b", () => {
+      const a = [
+        { a: 3, b: "test" },
+        { a: 44, b: "hello" },
+      ];
+      const b = [{ a: 3, b: "test" }];
+      const res = difference<ElemType>(a, b, equals);
+      expect(res).toEqual([{ a: 44, b: "hello" }]);
     });
   });
 });

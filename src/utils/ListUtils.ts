@@ -19,3 +19,13 @@ export const zip = <AT, BT>(listA: AT[], listB: BT[]): Array<[AT, BT]> => {
 export const zipRange = (n: number, m: number): Array<[number, number]> => {
   return zip(range(n), range(m));
 };
+
+export const difference = <T>(
+  listA: T[],
+  listB: T[],
+  equals: (elemA: T, elemB: T) => boolean
+): Array<T> => {
+  return listA.filter(
+    (elemA: T) => !listB.some((elemB: T) => equals(elemA, elemB))
+  );
+};

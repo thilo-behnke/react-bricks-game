@@ -15,8 +15,8 @@ export type GridCell = {
 export type GridMapping = Array<GridCell>;
 
 export type GridMappingAction = {
-  type: "remove_cell";
-  payload: { row: number; col: number };
+  type: "remove_cells";
+  payload: GridCell[];
 };
 
 export class StaticGridMappingProvider implements GridMappingProvider {

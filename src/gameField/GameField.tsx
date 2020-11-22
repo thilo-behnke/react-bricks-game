@@ -9,6 +9,7 @@ import {
   GridMappingProviderContext,
 } from "../mappingProvider/GridMappingProvider";
 import { GridMappingReducer } from "./reducer/GridMappingReducer";
+import { getAdjacentWithSameColor } from "../utils/GameFieldUtils";
 
 export type GameFieldProps = {
   rows: number;
@@ -32,30 +33,43 @@ export const GameField = (props: GameFieldProps) => {
     gridMappingProvider.generateMapping(props.rows, props.cols)
   );
 
-  const [selectedCell, setSelectedCell] = useState<GridCell | null>(null);
+  const [selectedCells, setSelectedCells] = useState<GridMapping>([]);
 
   const getCell = (cellRow: number, cellCol: number) => {
     return grid.find(({ row, col }) => row === cellRow && col === cellCol);
   };
 
-  // TODO: On hover: Detect adjacent and set state. Detection could be run in effect? Would that be more performant?
+  const isSelected = (cell?: GridCell) => {
+    if (!cell) {
+      return false;
+    }
+    return selectedCells.some(
+      ({ row, col }) => row === cell.row && col === cell.col
+    );
+  };
+
+  const dispatchRemoveCells = () => {
+    dispatch({
+      type: "remove_cells",
+      payload: selectedCells,
+    });
+  };
 
   return (
-    <Grid {...props}>
+    <Grid {...props} onMouseLeave={() => setSelectedCells([])}>
       {zipRange(props.rows, props.cols).map(([row, col]) => {
         const cell = getCell(row, col);
         return (
           <GameFieldCell
-            onMouseEnter={() => (cell ? setSelectedCell(cell) : null)}
-            isSelected={selectedCell?.row === row && selectedCell?.col === col}
+            onMouseEnter={() =>
+              cell
+                ? setSelectedCells(getAdjacentWithSameColor(cell, grid))
+                : null
+            }
+            isSelected={isSelected(cell)}
             key={`${row}/${col}`}
             color={cell?.color}
-            onClick={() =>
-              dispatch({
-                type: "remove_cell",
-                payload: { row, col },
-              })
-            }
+            onClick={dispatchRemoveCells}
           />
         );
       })}
