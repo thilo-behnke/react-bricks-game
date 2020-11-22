@@ -6,34 +6,24 @@ export interface GridMappingProvider {
   generateMapping: (rows: number, cols: number) => GridMapping;
 }
 
-// TODO: This data structure is terrible for functional updates... I did it this way to make the access in the ui efficient. Maybe switch the structure somehow when passing it into the component?
-export type GridMapping = {
-  [row: number]: { [col: number]: { color?: Color } };
+export type GridCell = {
+  row: number;
+  col: number;
+  color: Color;
 };
 
+export type GridMapping = Array<GridCell>;
+
 export type GridMappingAction = {
-  type: "update_cell_color";
-  payload: { row: number; col: number; color: Color | null };
+  type: "remove_cell";
+  payload: { row: number; col: number };
 };
 
 export class StaticGridMappingProvider implements GridMappingProvider {
   generateMapping(rows: number, cols: number): GridMapping {
-    return zipRange(rows, cols)
-      .map(([row, col]) => {
-        return { row, col, color: row % 4 === 0 ? Color.YELLOW : Color.BLUE };
-      })
-      .reduce((acc, { row, col, color }) => {
-        if (!acc[row]) {
-          acc[row] = {};
-        }
-        return {
-          ...acc,
-          [row]: {
-            ...(acc[row] || {}),
-            [col]: { ...(acc[row][col] || {}), color },
-          },
-        };
-      }, {} as GridMapping);
+    return zipRange(rows, cols).map(([row, col]) => {
+      return { row, col, color: row % 4 === 0 ? Color.YELLOW : Color.BLUE };
+    });
   }
 }
 

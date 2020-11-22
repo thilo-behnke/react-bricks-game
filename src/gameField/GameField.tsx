@@ -28,31 +28,24 @@ export const GameField = (props: GameFieldProps) => {
     Dispatch<GridMappingAction>
   ] = useReducer((state: GridMapping, action: GridMappingAction) => {
     switch (action.type) {
-      case "update_cell_color":
+      case "remove_cell":
         const {
-          payload: { row, col, color },
+          payload: { row: cellRow, col: cellCol },
         } = action;
-        if (action.payload.color === null) {
-          if (!state[row]?.[col]) {
-            return state;
-          }
-          const { color: _, ...stateWithoutColor } = state[row][col];
-          return {
-            ...state,
-            [row]: { ...state[row], [col]: stateWithoutColor },
-          };
-        }
-        return {
-          ...state,
-          [row]: {
-            ...state[row],
-            [col]: { ...state[row][col], color: color as Color },
-          },
-        };
+        return state.filter(
+          ({ row, col }) => row !== cellRow || col !== cellCol
+        );
       default:
         return state;
     }
   }, gridMappingProvider.generateMapping(props.rows, props.cols));
+
+  const getColor = (cellRow: number, cellCol: number) => {
+    const cell = grid.find(
+      ({ row, col }) => row === cellRow && col === cellCol
+    );
+    return cell?.color;
+  };
 
   // TODO: On hover: Detect adjacent and set state. Detection could be run in effect? Would that be more performant?
 
@@ -62,11 +55,11 @@ export const GameField = (props: GameFieldProps) => {
         return (
           <GameFieldCell
             key={`${row}/${col}`}
-            color={grid[row]?.[col]?.color}
+            color={getColor(row, col)}
             onClick={() =>
               dispatch({
-                type: "update_cell_color",
-                payload: { row, col, color: null },
+                type: "remove_cell",
+                payload: { row, col },
               })
             }
           />
