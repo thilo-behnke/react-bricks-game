@@ -124,7 +124,13 @@ export const GameStateReducer = (
         multiplier: Math.max(Math.floor(newSelectedCells.length / 10), 1),
       };
     case "unselect_cells":
-      return { ...state, selectedCells: [], selectedCellPosition: null };
+      return {
+        ...state,
+        selectedCells: [],
+        selectedCellPosition: null,
+        basePoints: null,
+        multiplier: null,
+      };
     case "set_wildcard":
       if (state.availableWildcards <= 0 || action.payload.isWildcard) {
         return state;
