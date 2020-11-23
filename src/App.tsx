@@ -1,25 +1,13 @@
 import React from "react";
 import "./App.css";
-import { GameField } from "./gameField/GameField";
-import styled from "styled-components";
 import {
   ClusteringRandomGridMappingProvider,
   GridMappingProviderContext,
 } from "./mappingProvider/GridMappingProvider";
+import { GameProvider } from "./reducer/GameStateContext";
+import { GameWrapper } from "./components/GameWrapper";
 
-const GameWrapper = styled.div`
-  min-height: 100%;
-  justify-content: stretch;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  grid-row-gap: 20px;
-  grid-template-columns: 1fr minmax(min-content, 2fr) 1fr;
-  grid-template-areas: "headerLeft header headerRight" "left game right" "footer footer footer";
-`;
-
-const StyledGameField = styled(GameField)`
-  grid-area: game;
-`;
+const gridMappingProvider = new ClusteringRandomGridMappingProvider();
 
 function App() {
   const rows = 20;
@@ -28,18 +16,17 @@ function App() {
   const wildcards = 5;
 
   return (
-    <GridMappingProviderContext.Provider
-      value={new ClusteringRandomGridMappingProvider()}
+    <GameProvider
+      grid={gridMappingProvider.generateMapping(rows, cols)}
+      turns={turns}
+      wildcards={wildcards}
+      rows={rows}
+      cols={cols}
     >
-      <GameWrapper>
-        <StyledGameField
-          rows={rows}
-          cols={cols}
-          wildCards={wildcards}
-          turns={turns}
-        />
-      </GameWrapper>
-    </GridMappingProviderContext.Provider>
+      <GridMappingProviderContext.Provider value={gridMappingProvider}>
+        <GameWrapper />
+      </GridMappingProviderContext.Provider>
+    </GameProvider>
   );
 }
 

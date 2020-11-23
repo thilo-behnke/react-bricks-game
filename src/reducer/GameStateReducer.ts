@@ -1,17 +1,24 @@
-import { difference } from "../../utils/ListUtils";
+import { difference } from "../utils/ListUtils";
 import {
   areCellsEqual,
   getAdjacentWithSameColor,
   repositionGrid,
-} from "../../utils/GameFieldUtils";
+} from "../utils/GameFieldUtils";
 import {
   Color,
   GameState,
   GridCell,
   GridMapping,
-} from "../../model/GameFieldModel";
+} from "../model/GameFieldModel";
 
-export type GridMappingState = {
+export type BricksGameDef = {
+  rows: number;
+  cols: number;
+  wildcards: number;
+  turns: number;
+};
+
+export type BricksGameState = {
   grid: GridMapping;
   selectedCells: GridMapping;
   selectedCellPosition: GridCell | null;
@@ -21,6 +28,9 @@ export type GridMappingState = {
   turns: number;
   interactionMode: InteractionMode;
   points: number;
+
+  basePoints: number | null;
+  multiplier: number | null;
 };
 
 export enum InteractionMode {
@@ -41,11 +51,14 @@ export type GridMappingAction =
   | { type: "set_wildcard"; payload: GridCell }
   | { type: "switch_interaction_mode"; payload: InteractionMode }
   | { type: "decrement_turns" }
-  | { type: "add_points"; payload: number };
-export const GridMappingReducer = (
-  state: GridMappingState,
+  | {
+      type: "reset";
+      payload: { grid: GridMapping; wildcards: number; turns: number };
+    };
+export const GameStateReducer = (
+  state: BricksGameState,
   action: GridMappingAction
-): GridMappingState => {
+): BricksGameState => {
   switch (action.type) {
     case "switch_interaction_mode":
       return { ...state, interactionMode: action.payload };
@@ -74,11 +87,21 @@ export const GridMappingReducer = (
         selectedCellPosition = newSelectedCellPosition;
       }
 
+      // For every 50 destroyed bricks award bonus turns.
+      const turns =
+        payload.length > 50
+          ? state.turns + Math.floor(state.turns / 50)
+          : Math.max(state.turns - 1, 0);
+      const gameState = turns > 0 ? state.gameState : GameState.LOST;
+
       return {
         ...state,
+        turns,
+        gameState,
         grid: repositionedGrid,
         selectedCells,
         selectedCellPosition,
+        points: state.basePoints! * state.multiplier!,
       };
     case "select_cells":
       if (
@@ -88,14 +111,17 @@ export const GridMappingReducer = (
       ) {
         return state;
       }
+      const newSelectedCells = action.payload
+        ? action.payload.expandToAdjacent
+          ? getAdjacentWithSameColor(action.payload.cellPosition, state.grid)
+          : [action.payload.cellPosition]
+        : [];
       return {
         ...state,
         selectedCellPosition: action.payload.cellPosition,
-        selectedCells: action.payload
-          ? action.payload.expandToAdjacent
-            ? getAdjacentWithSameColor(action.payload.cellPosition, state.grid)
-            : [action.payload.cellPosition]
-          : [],
+        selectedCells: newSelectedCells,
+        basePoints: newSelectedCells.length * 10,
+        multiplier: Math.max(Math.floor(newSelectedCells.length / 10), 1),
       };
     case "unselect_cells":
       return { ...state, selectedCells: [], selectedCellPosition: null };
@@ -142,20 +168,30 @@ export const GridMappingReducer = (
             ? state.interactionMode
             : InteractionMode.DEFAULT,
       };
-    case "decrement_turns":
-      const turns = Math.max(state.turns - 1, 0);
-      const gameState = turns > 0 ? state.gameState : GameState.LOST;
-      return {
-        ...state,
-        gameState,
-        turns,
-      };
-    case "add_points":
-      return {
-        ...state,
-        points: state.points + action.payload,
-      };
     default:
       return state;
+    case "reset":
+      return createInitialState(action.payload);
   }
 };
+
+export const createInitialState = ({
+  grid,
+  wildcards,
+  turns,
+}: {
+  grid: GridMapping;
+  wildcards: number;
+  turns: number;
+}) => ({
+  grid,
+  selectedCells: [],
+  selectedCellPosition: null,
+  availableWildcards: wildcards,
+  interactionMode: InteractionMode.DEFAULT,
+  turns: turns,
+  gameState: GameState.RUNNING,
+  points: 0,
+  basePoints: null,
+  multiplier: null,
+});
