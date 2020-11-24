@@ -2,7 +2,7 @@
 
 Puzzle game built in React.  
 
-Destroy blocks to earn points, the more points are destroyed in one turn, the higher the multiplier. 
+Destroy blocks to earn points, the more bricks the player destroys in one turn, the higher the multiplier. 
 
 ## How to run
 
