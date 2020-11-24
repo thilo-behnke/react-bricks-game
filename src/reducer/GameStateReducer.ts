@@ -101,7 +101,7 @@ export const GameStateReducer = (
         grid: repositionedGrid,
         selectedCells,
         selectedCellPosition,
-        points: state.basePoints! * state.multiplier!,
+        points: state.points + state.basePoints! * state.multiplier!,
       };
     case "select_cells":
       if (
