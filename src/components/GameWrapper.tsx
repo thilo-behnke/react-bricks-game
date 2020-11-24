@@ -13,12 +13,14 @@ import { GameStateModal } from "./GameStateModal";
 
 const StyledGameWrapper = styled.div`
   min-height: 100%;
+  margin-top: 20px;
   justify-content: stretch;
   display: grid;
   grid-template-rows: auto 1fr auto;
   grid-row-gap: 20px;
-  grid-template-columns: 1fr minmax(min-content, 2fr) 1fr;
-  grid-template-areas: "headerLeft header headerRight" "left game right" "footer footer footer";
+  grid-template-columns: 1fr max-content 20em 1fr;
+  grid-column-gap: 30px;
+  grid-template-areas: "left game controls right";
 `;
 
 export const GameWrapper = () => {
