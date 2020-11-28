@@ -18,7 +18,7 @@ const StyledGameWrapper = styled.div`
   display: grid;
   grid-template-rows: auto 1fr auto;
   grid-row-gap: 20px;
-  grid-template-columns: 1fr max-content 20em 1fr;
+  grid-template-columns: 1fr max-content 30em 1fr;
   grid-column-gap: 30px;
   grid-template-areas: "left game controls right";
 `;

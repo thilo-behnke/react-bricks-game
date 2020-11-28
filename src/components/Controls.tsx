@@ -29,6 +29,19 @@ export const Controls = () => {
 
   return (
     <StyledControls>
+      <div className="controls_info">
+        <InfoBox>Turns left: {turns}</InfoBox>
+        <InfoBox>
+          {points}
+          {basePoints ? (
+            <PointsUpdate>
+              {" "}
+              + {basePoints}{" "}
+              {multiplier && multiplier > 1 ? " x " + multiplier : ""}
+            </PointsUpdate>
+          ) : null}
+        </InfoBox>
+      </div>
       <WildcardButton
         className="controls_wildcard"
         disabled={availableWildcards <= 0}
@@ -39,19 +52,6 @@ export const Controls = () => {
           ? "Set Wildcard (" + availableWildcards + " left)"
           : "Cancel"}
       </WildcardButton>
-      <div className="controls_info">
-        <InfoBox>Turns left: {turns}</InfoBox>
-        <InfoBox>
-          <span>Points: {points} </span>
-          {basePoints ? (
-            <PointsUpdate>
-              {" "}
-              + {basePoints}{" "}
-              {multiplier && multiplier > 1 ? " x " + multiplier : ""}
-            </PointsUpdate>
-          ) : null}
-        </InfoBox>
-      </div>
     </StyledControls>
   );
 };
@@ -61,12 +61,11 @@ const StyledControls = styled.div`
   width: 100%;
   padding: 2em 1em;
   justify-self: center;
-  border: 1px solid royalblue;
+  border: 1px solid black;
   border-radius: 0.7em;
-  background-color: lightblue;
 
   display: grid;
-  grid-template-rows: min-content 1fr;
+  grid-template-rows: 1fr min-content;
   grid-row-gap: 30px;
 `;
 
@@ -90,13 +89,11 @@ const WildcardButton = styled.button`
 `;
 
 const InfoBox = styled.div`
+  font-size: 2em;
   margin-top: 1em;
-  font-size: 1em;
-  color: white;
-  padding: 2em 1em;
-  border: 1px solid dodgerblue;
-  border-radius: 0.5em;
-  background-color: dodgerblue;
+  padding: 20px 10px;
+  border: 1px solid black;
+  border-radius: 0.2em;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
@@ -116,9 +113,10 @@ const PointsUpdate = styled.span`
     }
   }
 
+  color: red;
   position: absolute;
-  left: 100px;
-  top: 55px;
+  left: 180px;
+  top: 15px;
   animation-duration: 0.8s;
   animation-name: change-height;
   animation-iteration-count: infinite;
