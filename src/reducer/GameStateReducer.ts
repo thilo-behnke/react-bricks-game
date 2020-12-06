@@ -1,4 +1,3 @@
-import { difference } from "../utils/ListUtils";
 import {
   areCellsEqual,
   getAdjacentWithSameColor,

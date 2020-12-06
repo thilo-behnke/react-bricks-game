@@ -10,7 +10,6 @@ import {
 import { GameState } from "../model/GameFieldModel";
 import { GridMappingProviderContext } from "../mappingProvider/GridMappingProvider";
 import { GameStateModal } from "./GameStateModal";
-import { Feedback } from "./Feedback";
 
 const StyledGameWrapper = styled.div`
   min-height: 100%;
@@ -25,7 +24,7 @@ const StyledGameWrapper = styled.div`
 `;
 
 export const GameWrapper = () => {
-  const { gameState, grid } = useContext(GameStateContext);
+  const { gameState } = useContext(GameStateContext);
   const { rows, cols, wildcards, turns } = useContext(GameDefContext);
   const gridMappingProvider = useContext(GridMappingProviderContext);
   const dispatch = useContext(GameStateDispatcherContext);
