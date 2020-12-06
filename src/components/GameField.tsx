@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 import { zipRange } from "../utils/ListUtils";
 import { GameFieldCell } from "./GameFieldCell";
@@ -60,7 +60,7 @@ export const GameField = () => {
 
   const dispatchRemoveCells = () => {
     dispatch({
-      type: "remove_cells",
+      type: "mark_cells_for_destruction",
       payload: selectedCells,
     });
   };
@@ -111,6 +111,16 @@ export const GameField = () => {
     };
   };
 
+  useEffect(() => {
+    const markedForDestruction = grid.filter(
+      (cell) => cell.isMarkedForDestruction
+    );
+    // TODO: Reset timer!
+    if (markedForDestruction.length) {
+      setTimeout(() => dispatch({ type: "destroy_marked_cells" }), 200);
+    }
+  }, [grid, dispatch]);
+
   return (
     <StyledGameField
       rows={rows}
@@ -128,6 +138,7 @@ export const GameField = () => {
               key={`${row}/${col}`}
               color={cell?.color}
               onClick={handleCellClick(cell)}
+              shouldDestroy={cell?.isMarkedForDestruction}
             />
           );
         })}

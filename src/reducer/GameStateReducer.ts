@@ -40,8 +40,11 @@ export enum InteractionMode {
 
 export type GridMappingAction =
   | {
-      type: "remove_cells";
+      type: "mark_cells_for_destruction";
       payload: GridMapping;
+    }
+  | {
+      type: "destroy_marked_cells";
     }
   | {
       type: "select_cells";
@@ -62,9 +65,25 @@ export const GameStateReducer = (
   switch (action.type) {
     case "switch_interaction_mode":
       return { ...state, interactionMode: action.payload };
-    case "remove_cells":
-      const { payload } = action;
-      const grid = difference(state.grid, payload, areCellsEqual);
+    case "mark_cells_for_destruction":
+      const { payload: cellsToMark } = action;
+      return {
+        ...state,
+        grid: state.grid.map((cell) => {
+          const toMark = cellsToMark.some((cellToMark) =>
+            areCellsEqual(cell, cellToMark)
+          );
+          return {
+            ...cell,
+            isMarkedForDestruction: toMark,
+          };
+        }),
+      };
+    case "destroy_marked_cells":
+      const grid = state.grid.filter((cell) => !cell.isMarkedForDestruction);
+      const cellsMarkedForDestruction = state.grid.filter(
+        (cell) => cell.isMarkedForDestruction
+      );
       const [repositionedGrid, wasUpdated] = repositionGrid(grid);
 
       let selectedCells = state.selectedCells;
@@ -89,7 +108,7 @@ export const GameStateReducer = (
 
       // For every 50 destroyed bricks award bonus turns.
       const turns =
-        payload.length > 50
+        cellsMarkedForDestruction.length > 50
           ? state.turns + Math.floor(state.turns / 50)
           : Math.max(state.turns - 1, 0);
       const gameState = turns > 0 ? state.gameState : GameState.LOST;
