@@ -7,3 +7,7 @@ Destroy blocks to earn points, the more bricks the player destroys in one turn, 
 ## How to run
 
 Start dev server: `yarn start`
+
+# Demo
+
+![](docs/demo.gif)
