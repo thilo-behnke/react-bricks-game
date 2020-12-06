@@ -27,7 +27,7 @@ const Cell = styled.div`
     solid ${(props: GameFieldCellProps) => (props.isSelected ? "red" : "grey")};
   background-color: ${(props: GameFieldCellProps) => props.color};
   animation: ${(props: GameFieldCellProps) =>
-    props.shouldDestroy ? "vaporize-block 200ms linear" : "none"};
+    props.shouldDestroy ? "vaporize-block 300ms linear" : "none"};
 `;
 
 export const GameFieldCell = (props: GameFieldCellProps) => {

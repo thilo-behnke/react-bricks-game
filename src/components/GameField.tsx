@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { zipRange } from "../utils/ListUtils";
 import { GameFieldCell } from "./GameFieldCell";
@@ -9,6 +9,7 @@ import {
   GameStateContext,
   GameStateDispatcherContext,
 } from "../reducer/GameStateContext";
+import { Feedback } from "./Feedback";
 
 type GridProps = {
   rows: number;
@@ -17,6 +18,7 @@ type GridProps = {
 
 const StyledGameField = styled.div`
   grid-area: game;
+  position: relative;
 
   justify-self: center;
   display: grid;
@@ -28,6 +30,8 @@ export const GameField = () => {
   const { grid, selectedCells, interactionMode } = useContext(GameStateContext);
   const { rows, cols } = useContext(GameDefContext);
   const dispatch = useContext(GameStateDispatcherContext);
+
+  const [nrRemovedCells, setNrRemovedCells] = useState<number | null>(null);
 
   const getCell = (cellRow: number, cellCol: number) => {
     return grid.find(({ row, col }) => row === cellRow && col === cellCol);
@@ -115,9 +119,15 @@ export const GameField = () => {
     const markedForDestruction = grid.filter(
       (cell) => cell.isMarkedForDestruction
     );
-    // TODO: Reset timer!
     if (markedForDestruction.length) {
-      setTimeout(() => dispatch({ type: "destroy_marked_cells" }), 200);
+      setNrRemovedCells(markedForDestruction.length);
+      setTimeout(() => {
+        dispatch({ type: "destroy_marked_cells" });
+      }, 300);
+    } else {
+      setTimeout(() => {
+        setNrRemovedCells(null);
+      }, 300);
     }
   }, [grid, dispatch]);
 
@@ -127,6 +137,7 @@ export const GameField = () => {
       cols={cols}
       onMouseLeave={() => dispatchUnselectCells()}
     >
+      {nrRemovedCells ? <Feedback nrRemovedCells={nrRemovedCells} /> : null}
       {zipRange(rows, cols)
         .reverse()
         .map(([row, col]) => {
