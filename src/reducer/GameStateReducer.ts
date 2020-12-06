@@ -102,6 +102,7 @@ export const GameStateReducer = (
         selectedCells,
         selectedCellPosition,
         points: state.points + state.basePoints! * state.multiplier!,
+        ...calculateScoreUpdate(selectedCells),
       };
     case "select_cells":
       if (
@@ -116,12 +117,12 @@ export const GameStateReducer = (
           ? getAdjacentWithSameColor(action.payload.cellPosition, state.grid)
           : [action.payload.cellPosition]
         : [];
+      const scoreUpdate = calculateScoreUpdate(newSelectedCells);
       return {
         ...state,
         selectedCellPosition: action.payload.cellPosition,
         selectedCells: newSelectedCells,
-        basePoints: newSelectedCells.length * 10,
-        multiplier: Math.max(Math.floor(newSelectedCells.length / 10), 1),
+        ...scoreUpdate,
       };
     case "unselect_cells":
       return {
@@ -201,3 +202,17 @@ export const createInitialState = ({
   basePoints: null,
   multiplier: null,
 });
+
+const calculateScoreUpdate = (selectedCells: GridCell[]) => {
+  if (!selectedCells.length) {
+    return {
+      basePoints: null,
+      multiplier: null,
+    };
+  }
+
+  return {
+    basePoints: selectedCells.length * 10,
+    multiplier: Math.max(Math.floor(selectedCells.length / 10), 1),
+  };
+};
